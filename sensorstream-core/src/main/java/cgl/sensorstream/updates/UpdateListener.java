@@ -7,9 +7,9 @@ import javax.jms.*;
 public class UpdateListener {
     private String queueName;
 
-    private String connectionFactory;
+    private String connectionString;
 
-    public class ListenerWorker implements Runnable,  ExceptionListener{
+    public class ListenerWorker implements Runnable, ExceptionListener {
         public void run() {
             try {
                 // Create a ConnectionFactory
@@ -25,7 +25,7 @@ public class UpdateListener {
                 Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
                 // Create the destination (Topic or Queue)
-                Destination destination = session.createQueue("TEST.FOO");
+                Destination destination = session.createQueue(queueName);
 
                 // Create a MessageConsumer from the Session to the Topic or Queue
                 MessageConsumer consumer = session.createConsumer(destination);
