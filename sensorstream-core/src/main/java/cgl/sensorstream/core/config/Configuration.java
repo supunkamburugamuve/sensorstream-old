@@ -1,10 +1,5 @@
-package cgl.sensorstream.config;
+package cgl.sensorstream.core.config;
 
-import cgl.sensorstream.ConfigurationException;
-import org.ho.yaml.Yaml;
-
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;

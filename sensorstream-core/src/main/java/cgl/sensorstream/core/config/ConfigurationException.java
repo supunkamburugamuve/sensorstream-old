@@ -1,4 +1,4 @@
-package cgl.sensorstream;
+package cgl.sensorstream.core.config;
 
 public class ConfigurationException extends Exception {
     public ConfigurationException() {

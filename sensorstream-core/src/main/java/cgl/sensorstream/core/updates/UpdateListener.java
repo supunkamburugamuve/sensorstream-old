@@ -1,4 +1,4 @@
-package cgl.sensorstream.updates;
+package cgl.sensorstream.core.updates;
 
 import org.apache.activemq.spring.ActiveMQConnectionFactory;
 
