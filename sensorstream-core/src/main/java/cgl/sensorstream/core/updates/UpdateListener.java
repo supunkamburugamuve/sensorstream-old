@@ -4,54 +4,84 @@ import org.apache.activemq.spring.ActiveMQConnectionFactory;
 
 import javax.jms.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class UpdateListener {
-    private String queueName;
+    private static Logger LOG = LoggerFactory.getLogger(UpdateListener.class);
 
-    private String connectionString;
+    private ConnectionFactory connectionFactory;
 
-    public class ListenerWorker implements Runnable, ExceptionListener {
-        public void run() {
-            try {
-                // Create a ConnectionFactory
-                ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
+    private Destination listeningDestination;
 
-                // Create a Connection
-                Connection connection = connectionFactory.createConnection();
-                connection.start();
+    private Connection connection;
 
-                connection.setExceptionListener(this);
+    private Session session;
 
-                // Create a Session
-                Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+    private MessageConsumer consumer;
 
-                // Create the destination (Topic or Queue)
-                Destination destination = session.createQueue(queueName);
+    public UpdateListener(ConnectionFactory connectionFactory, Destination listeningDestination) {
+        this.connectionFactory = connectionFactory;
+        this.listeningDestination = listeningDestination;
 
-                // Create a MessageConsumer from the Session to the Topic or Queue
-                MessageConsumer consumer = session.createConsumer(destination);
+        init();
+    }
 
-                // Wait for a message
-                Message message = consumer.receive(1000);
+    private void init() {
+        try {
+            // Create a ConnectionFactory
+            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
 
-                if (message instanceof TextMessage) {
-                    TextMessage textMessage = (TextMessage) message;
-                    String text = textMessage.getText();
-                    System.out.println("Received: " + text);
-                } else {
-                    System.out.println("Received: " + message);
+            // Create a Connection
+            connection = connectionFactory.createConnection();
+            connection.start();
+
+            connection.setExceptionListener(new ListeningException());
+            // Create a Session
+            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            // Create a MessageConsumer from the Session to the Topic or Queue
+            consumer = session.createConsumer(listeningDestination);
+            // register a handler for receiving messages
+            consumer.setMessageListener(new UpdateMessageListener());
+        } catch (Exception e) {
+            String s = "Failed to create the JMS connection";
+            LOG.error(s, e);
+            throw new RuntimeException(s, e);
+        }
+    }
+
+    public void destroy() {
+        try {
+            consumer.close();
+            session.close();
+            connection.close();
+        } catch (JMSException e) {
+            LOG.error("Failed to close the JMS Connection", e);
+        }
+    }
+
+    private class UpdateMessageListener implements MessageListener {
+        @Override
+        public void onMessage(Message message) {
+            if (message instanceof TextMessage) {
+                TextMessage textMessage = (TextMessage) message;
+                String text = null;
+                try {
+                    text = textMessage.getText();
+                } catch (JMSException e) {
+                    e.printStackTrace();
                 }
-
-                consumer.close();
-                session.close();
-                connection.close();
-            } catch (Exception e) {
-                System.out.println("Caught: " + e);
-                e.printStackTrace();
+                System.out.println("Received: " + text);
+            } else {
+                System.out.println("Received: " + message);
             }
         }
+    }
 
-        public synchronized void onException(JMSException ex) {
-            System.out.println("JMS Exception occured.  Shutting down client.");
+    private class ListeningException implements ExceptionListener {
+        @Override
+        public void onException(JMSException e) {
+            LOG.error("Exception occurred in JMS Connection", e);
         }
     }
 }
