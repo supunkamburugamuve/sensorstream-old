@@ -36,5 +36,9 @@
             <artifactId>storm-core</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.ptgoetz</groupId>
+            <artifactId>storm-jms</artifactId>
+        </dependency>
     </dependencies>
 </project>

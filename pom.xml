@@ -17,6 +17,7 @@
         <jms.version>1.1.1</jms.version>
         <activemq.version>5.7.0</activemq.version>
         <storm.version>0.9.1-incubating-SNAPSHOT</storm.version>
+        <storm.jms.version>0.9.1-SNAPSHOT</storm.jms.version>
     </properties>
 
     <dependencyManagement>
@@ -40,6 +41,11 @@
                 <groupId>org.apache.storm</groupId>
                 <artifactId>storm-core</artifactId>
                 <version>${storm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ptgoetz</groupId>
+                <artifactId>storm-jms</artifactId>
+                <version>${storm.jms.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
