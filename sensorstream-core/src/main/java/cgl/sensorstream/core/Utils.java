@@ -1,5 +1,6 @@
 package cgl.sensorstream.core;
 
+import cgl.sensorstream.core.config.Configuration;
 import org.ho.yaml.Yaml;
 
 import java.io.IOException;
@@ -64,4 +65,12 @@ public class Utils {
         ret.putAll(storm);
         return ret;
     }
+
+    public static String getZkConnectionString(Map conf) {
+        int port = (Integer) conf.get(Configuration.SS_ZOOKEEPER_PORT);
+        List servers = (List) conf.get(Configuration.SS_ZOOKEEPER_SERVERS);
+
+        return servers.get(0) + ":" + port;
+    }
+
 }

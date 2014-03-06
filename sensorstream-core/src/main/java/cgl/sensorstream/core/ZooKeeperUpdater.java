@@ -8,7 +8,6 @@ import org.apache.curator.utils.CloseableUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
@@ -28,18 +27,17 @@ public class ZooKeeperUpdater {
             throw new IllegalArgumentException("Configuration map is required");
         }
 
-        int port = (Integer) conf.get(Configuration.SS_ZOOKEEPER_PORT);
-        List servers = (List) conf.get(Configuration.SS_ZOOKEEPER_SERVERS);
+
         int retryTimes = (Integer) conf.get(Configuration.SS_ZOOKEEPER_RETRY_TIMES);
         int retryInterval = (Integer) conf.get(Configuration.SS_ZOOKEEPER_RETRY_INTERVAL);
         int maxSleepMs = (Integer) conf.get(Configuration.SS_ZOOKEEPER_RETRY_INTERVALCEILING_MILLIS);
 
         try {
-            client = CuratorFrameworkFactory.newClient(servers.get(0) + ":" + port, new ExponentialBackoffRetry(retryInterval, retryTimes, maxSleepMs));
+            client = CuratorFrameworkFactory.newClient(Utils.getZkConnectionString(conf),
+                    new ExponentialBackoffRetry(retryInterval, retryTimes, maxSleepMs));
             client.start();
-
         } catch (Exception e) {
-            String msg = "Failed to create the connection to server" + servers.get(0) + " with port " + port;
+            String msg = "Failed to create the connection to server" + Utils.getZkConnectionString(conf);
             LOG.error(msg, e);
             throw new RuntimeException(msg, e);
         }
@@ -107,11 +105,11 @@ public class ZooKeeperUpdater {
         }
     }
 
-    private String getCompletePath(Map conf, Update update) {
-        return conf.get(Configuration.SS_ZOOKEEPER_ROOT) + "/" + update.getPath();
-    }
-
     public void stop() {
         CloseableUtils.closeQuietly(client);
+    }
+
+    public static String getCompletePath(Map conf, Update update) {
+        return conf.get(Configuration.SS_ZOOKEEPER_ROOT) + "/" + update.getPath();
     }
 }

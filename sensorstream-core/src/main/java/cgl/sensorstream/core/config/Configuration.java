@@ -2,6 +2,9 @@ package cgl.sensorstream.core.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.management.resources.agent_pt_BR;
+
+import java.util.Map;
 
 public class Configuration {
     private static Logger LOG = LoggerFactory.getLogger(Configuration.class);
@@ -34,4 +37,10 @@ public class Configuration {
     public static final String SS_BROKER_URL = "ss.broker.url";
     // the update listening queue
     public static final String SS_BROKER_UPDATE_QUEUE = "ss.broker.update.queue";
+    
+    public static final String SS_ZOOKEEPER_UPDATES_SIZE = "ss.zookeeper.updates.size";
+
+    public static String getZkRoot(Map conf) {
+        return (String) conf.get(SS_ZOOKEEPER_ROOT);
+    }
 }
