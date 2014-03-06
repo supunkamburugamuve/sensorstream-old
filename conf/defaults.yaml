@@ -1,6 +1,7 @@
 ss.iot.server: "localhost"
 
 ss.broker.url: "localhost:57606"
+ss.broker.update.queue: "update"
 
 ss.zookeeper.servers:
     - "localhost"

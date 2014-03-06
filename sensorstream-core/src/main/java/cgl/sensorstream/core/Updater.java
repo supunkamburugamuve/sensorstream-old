@@ -1,22 +1,29 @@
 package cgl.sensorstream.core;
 
-import cgl.sensorstream.core.updates.UpdateListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import java.util.concurrent.BlockingQueue;
 
-public class Updater {
+public class Updater implements MessageListener {
+    private static Logger LOG = LoggerFactory.getLogger(Updater.class);
 
-    private UpdateListener updateListener;
+    private BlockingQueue<Update> updates;
 
-    public Updater(Map conf) {
-
+    public Updater(BlockingQueue<Update> updates) {
+        this.updates = updates;
     }
 
-    public void start() {
-
-    }
-
-    public void destroy() {
-
+    @Override
+    public void onMessage(Message message) {
+        // parse the update message and put it to the queue
+        Update update = new Update(Update.Type.ADD, "/");
+        try {
+            updates.put(update);
+        } catch (InterruptedException e) {
+            LOG.error("Error occurred while putting the update to queue");
+        }
     }
 }

@@ -7,7 +7,6 @@ public class Configuration {
     private static Logger LOG = LoggerFactory.getLogger(Configuration.class);
 
     // constants for configurations
-    
     // the iot server url
     public static final String SS_IOT_SERVER = "localhost";
        
@@ -31,4 +30,8 @@ public class Configuration {
 
     // number of updates that we can handle at a given time
     public static final String SS_SENSOR_UPDATES_SIZE = "ss.sensor.updates.size";
+    // the broker url to be used
+    public static final String SS_BROKER_URL = "ss.broker.url";
+    // the update listening queue
+    public static final String SS_BROKER_UPDATE_QUEUE = "ss.broker.update.queue";
 }

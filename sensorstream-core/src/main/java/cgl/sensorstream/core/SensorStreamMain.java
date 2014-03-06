@@ -8,7 +8,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class SensorStreamMain {
-
     public static void main(String[] args) {
         // read the configuration
         Map conf = Utils.readDefaultConfig();
@@ -20,7 +19,6 @@ public class SensorStreamMain {
         zkUpdater.start(conf, updates);
 
         // now create the listener for updates
-        UpdateListener listener = new UpdateListener(conf);
-
+        UpdateListener listener = new UpdateListener(conf, new Updater(updates));
     }
 }

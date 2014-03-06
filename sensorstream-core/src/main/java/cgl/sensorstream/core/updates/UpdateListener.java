@@ -1,8 +1,10 @@
 package cgl.sensorstream.core.updates;
 
+import cgl.sensorstream.core.config.Configuration;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.security.krb5.Config;
 
 import javax.jms.*;
 import java.util.Map;
@@ -28,9 +30,9 @@ public class UpdateListener {
     // the jms listener
     private MessageListener messageListener;
 
-    public UpdateListener(Map conf) {
+    public UpdateListener(Map conf, MessageListener listener) {
         try {
-            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
+            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(getJMSConnectionString(conf));
 
             // Create a Connection
             connection = connectionFactory.createConnection();
@@ -39,6 +41,8 @@ public class UpdateListener {
             connection.setExceptionListener(new ListeningException());
             // Create a Session
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            // the destination according to config parameters
+            listeningDestination = session.createQueue(getJMSDestination(conf));
             // Create a MessageConsumer from the Session to the Topic or Queue
             consumer = session.createConsumer(listeningDestination);
             // register a handler for receiving messages
@@ -51,7 +55,11 @@ public class UpdateListener {
     }
 
     private String getJMSConnectionString(Map conf) {
-        return conf.get("");
+        return (String) conf.get(Configuration.SS_BROKER_URL);
+    }
+
+    private String getJMSDestination(Map conf) {
+        return (String) conf.get(Configuration.SS_BROKER_UPDATE_QUEUE);
     }
 
     public void destroy() {
