@@ -1,9 +1,5 @@
 package cgl.sensorstream.core.config;
 
-import cgl.sensorstream.core.Utils;
-
-import java.util.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,4 +28,7 @@ public class Configuration {
     public static final String SS_ZOOKEEPER_RETRY_INTERVAL = "ss.zookeeper.retry.interval";
 
     public static final String SS_ZOOKEEPER_RETRY_INTERVALCEILING_MILLIS = "ss.zookeeper.retry.intervalceiling.millis";
+
+    // number of updates that we can handle at a given time
+    public static final String SS_SENSOR_UPDATES_SIZE = "ss.sensor.updates.size";
 }

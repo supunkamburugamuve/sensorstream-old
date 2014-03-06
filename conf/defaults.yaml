@@ -1,4 +1,3 @@
-
 ss.iot.server: "localhost"
 
 ss.zookeeper.servers:
@@ -11,3 +10,4 @@ ss.zookeeper.retry.times: 5
 ss.zookeeper.retry.interval: 1000
 ss.zookeeper.retry.intervalceiling.millis: 30000
 
+ss.sensor.updates.size: 1000

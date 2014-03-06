@@ -5,35 +5,36 @@ import javax.jms.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 /**
  * A listener for getting updates about sensors
  */
 public class UpdateListener {
     private static Logger LOG = LoggerFactory.getLogger(UpdateListener.class);
 
+    // the connection factory to be used
     private ConnectionFactory connectionFactory;
 
+    // listening destination
     private Destination listeningDestination;
 
+    // the connection
     private Connection connection;
 
+    // jms session
     private Session session;
 
+    // message consumer
     private MessageConsumer consumer;
 
+    // the jms listener
     private MessageListener messageListener;
 
-    public UpdateListener(ConnectionFactory connectionFactory,
-                          Destination listeningDestination, MessageListener messageListener) {
-        this.messageListener = messageListener;
-        this.connectionFactory = connectionFactory;
-        this.listeningDestination = listeningDestination;
-
-        init();
-    }
-
-    private void init() {
+    public UpdateListener(Map conf) {
         try {
+            connectionFactory = new ActiveMQConnectionFactory("")
+
             // Create a Connection
             connection = connectionFactory.createConnection();
             connection.start();
@@ -50,6 +51,10 @@ public class UpdateListener {
             LOG.error(s, e);
             throw new RuntimeException(s, e);
         }
+    }
+
+    private String getJMSConnectionString(Map conf) {
+
     }
 
     public void destroy() {
