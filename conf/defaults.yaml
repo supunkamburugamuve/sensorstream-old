@@ -1,5 +1,7 @@
 ss.iot.server: "localhost"
 
+ss.broker.url: "localhost:57606"
+
 ss.zookeeper.servers:
     - "localhost"
 ss.zookeeper.port: 2181

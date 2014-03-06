@@ -1,10 +1,10 @@
 package cgl.sensorstream.core.updates;
 
-import javax.jms.*;
-
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jms.*;
 import java.util.Map;
 
 /**
@@ -12,9 +12,6 @@ import java.util.Map;
  */
 public class UpdateListener {
     private static Logger LOG = LoggerFactory.getLogger(UpdateListener.class);
-
-    // the connection factory to be used
-    private ConnectionFactory connectionFactory;
 
     // listening destination
     private Destination listeningDestination;
@@ -33,7 +30,7 @@ public class UpdateListener {
 
     public UpdateListener(Map conf) {
         try {
-            connectionFactory = new ActiveMQConnectionFactory("")
+            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
 
             // Create a Connection
             connection = connectionFactory.createConnection();
@@ -54,7 +51,7 @@ public class UpdateListener {
     }
 
     private String getJMSConnectionString(Map conf) {
-
+        return conf.get("");
     }
 
     public void destroy() {
