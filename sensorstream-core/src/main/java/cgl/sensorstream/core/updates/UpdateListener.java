@@ -1,12 +1,13 @@
 package cgl.sensorstream.core.updates;
 
-import org.apache.activemq.spring.ActiveMQConnectionFactory;
-
 import javax.jms.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A listener for getting updates about sensors
+ */
 public class UpdateListener {
     private static Logger LOG = LoggerFactory.getLogger(UpdateListener.class);
 
@@ -20,7 +21,11 @@ public class UpdateListener {
 
     private MessageConsumer consumer;
 
-    public UpdateListener(ConnectionFactory connectionFactory, Destination listeningDestination) {
+    private MessageListener messageListener;
+
+    public UpdateListener(ConnectionFactory connectionFactory,
+                          Destination listeningDestination, MessageListener messageListener) {
+        this.messageListener = messageListener;
         this.connectionFactory = connectionFactory;
         this.listeningDestination = listeningDestination;
 
@@ -29,9 +34,6 @@ public class UpdateListener {
 
     private void init() {
         try {
-            // Create a ConnectionFactory
-            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
-
             // Create a Connection
             connection = connectionFactory.createConnection();
             connection.start();
@@ -42,7 +44,7 @@ public class UpdateListener {
             // Create a MessageConsumer from the Session to the Topic or Queue
             consumer = session.createConsumer(listeningDestination);
             // register a handler for receiving messages
-            consumer.setMessageListener(new UpdateMessageListener());
+            consumer.setMessageListener(messageListener);
         } catch (Exception e) {
             String s = "Failed to create the JMS connection";
             LOG.error(s, e);
@@ -57,24 +59,6 @@ public class UpdateListener {
             connection.close();
         } catch (JMSException e) {
             LOG.error("Failed to close the JMS Connection", e);
-        }
-    }
-
-    private class UpdateMessageListener implements MessageListener {
-        @Override
-        public void onMessage(Message message) {
-            if (message instanceof TextMessage) {
-                TextMessage textMessage = (TextMessage) message;
-                String text = null;
-                try {
-                    text = textMessage.getText();
-                } catch (JMSException e) {
-                    e.printStackTrace();
-                }
-                System.out.println("Received: " + text);
-            } else {
-                System.out.println("Received: " + message);
-            }
         }
     }
 

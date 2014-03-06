@@ -20,10 +20,29 @@
         <storm.jms.version>0.9.1-SNAPSHOT</storm.jms.version>
         <slf4j.version>1.7.6</slf4j.version>
         <log4j.version>1.2.15</log4j.version>
+        <curator.version>2.4.0</curator.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- logging dependencies -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+
+
             <dependency>
                 <groupId>org.jyaml</groupId>
                 <artifactId>jyaml</artifactId>
@@ -50,20 +69,11 @@
                 <version>${storm.jms.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>${curator.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
+
         </dependencies>
     </dependencyManagement>
 </project>
