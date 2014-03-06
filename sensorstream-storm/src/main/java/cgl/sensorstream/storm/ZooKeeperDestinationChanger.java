@@ -12,18 +12,22 @@ import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.utils.CloseableUtils;
 import org.apache.curator.utils.ZKPaths;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class ZooKeeperDestinationChanger implements DestinationChanger {
+    private static Logger LOG = LoggerFactory.getLogger(ZooKeeperDestinationChanger.class);
+
     private BlockingQueue<Notification> notifications;
 
     private CuratorFramework client = null;
     private PathChildrenCache cache = null;
 
-    public void start(Map conf) throws Exception {
+    public void start(Map conf) {
         notifications = new ArrayBlockingQueue<Notification>((Integer)
                 conf.get(Configuration.SS_SENSOR_UPDATES_SIZE));
 
@@ -33,7 +37,13 @@ public class ZooKeeperDestinationChanger implements DestinationChanger {
 
         // in this example we will cache data. Notice that this is optional.
         cache = new PathChildrenCache(client, Configuration.getZkRoot(conf), true);
-        cache.start();
+        try {
+            cache.start();
+        } catch (Exception e) {
+            String msg = "Failed to start the path cache";
+            LOG.error(msg, e);
+            throw new RuntimeException(msg, e);
+        }
 
         addListener(cache);
     }
