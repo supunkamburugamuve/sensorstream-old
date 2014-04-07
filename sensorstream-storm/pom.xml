@@ -11,7 +11,7 @@
     </parent>
     <artifactId>sensorstream-storm</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>sensorstream-core</name>
+    <name>sensorstream-storm</name>
     <url>http://maven.apache.org</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

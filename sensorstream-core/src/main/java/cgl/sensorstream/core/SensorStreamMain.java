@@ -22,7 +22,7 @@ public class SensorStreamMain {
             zkUpdater.start(conf, updates);
 
             // now create the listener for updates
-            listener = new UpdateListener(conf, new Updater(updates));
+//            listener = new UpdateListener(conf, new Updater(updates));
         } finally {
             if (zkUpdater != null) {
                 zkUpdater.stop();

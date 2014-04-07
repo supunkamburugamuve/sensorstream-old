@@ -1,7 +1,5 @@
 package cgl.sensorstream.storm;
 
-import backtype.storm.contrib.jms.DestinationChanger;
-import backtype.storm.contrib.jms.Notification;
 import cgl.sensorstream.core.Utils;
 import cgl.sensorstream.core.config.Configuration;
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -121,7 +119,6 @@ public class ZooKeeperDestinationChanger implements DestinationChanger {
         }
     }
 
-    @Override
     public BlockingQueue<Notification> getNotifications() {
         return notifications;
     }
