@@ -49,7 +49,7 @@ public class PerfTopology {
             averageLatency = averageLatency + delta / count;
             _collector.emit(new Values(averageLatency));
 
-            LOG.info("The latency: " + val + " count: " + count);
+            LOG.info("The latency: " + averageLatency + " count: " + count);
             _collector.ack(tuple);
         }
 
@@ -105,7 +105,7 @@ public class PerfTopology {
         Destination destination;
 
         private LocalJMSProvider() {
-            this.connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+            this.connectionFactory = new ActiveMQConnectionFactory("tcp://10.39.1.55:61616");
             Connection connection;
             try {
                 connection = connectionFactory.createConnection();
