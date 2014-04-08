@@ -31,7 +31,7 @@ public class PerfTopology {
 
         @Override
         public void execute(Tuple tuple) {
-            _collector.emit(tuple, new Values(tuple.getString(0) + "!!!"));
+            tuple.getValue(10);
             _collector.ack(tuple);
         }
 
@@ -85,8 +85,8 @@ public class PerfTopology {
         conf.setDebug(true);
 
         if (args != null && args.length > 0) {
-            conf.setNumWorkers(3);
-            StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
+            conf.setNumWorkers(4);
+            StormSubmitter.submitTopology("perf", conf, builder.createTopology());
         } else {
             LocalCluster cluster = new LocalCluster();
             cluster.submitTopology("perf", conf, builder.createTopology());
