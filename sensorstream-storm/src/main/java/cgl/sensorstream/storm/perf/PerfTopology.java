@@ -3,9 +3,11 @@ package cgl.sensorstream.storm.perf;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
+import backtype.storm.contrib.jms.JmsProvider;
+import backtype.storm.contrib.jms.JmsTupleProducer;
+import backtype.storm.contrib.jms.spout.JmsSpout;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
-import backtype.storm.testing.TestWordSpout;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.topology.base.BaseRichBolt;
@@ -13,7 +15,9 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
+import org.apache.activemq.ActiveMQConnectionFactory;
 
+import javax.jms.*;
 import java.util.Map;
 
 public class PerfTopology {
@@ -33,16 +37,49 @@ public class PerfTopology {
 
         @Override
         public void declareOutputFields(OutputFieldsDeclarer declarer) {
-            declarer.declare(new Fields("word"));
+            declarer.declare(new Fields("time"));
         }
     }
 
     public static void main(String[] args) throws Exception {
         TopologyBuilder builder = new TopologyBuilder();
 
-        builder.setSpout("word", new TestWordSpout(), 1);
-        builder.setBolt("exclaim1", new ExclamationBolt(), 3).shuffleGrouping("word");
-        builder.setBolt("exclaim2", new ExclamationBolt(), 2).shuffleGrouping("exclaim1");
+        JmsSpout spout = new JmsSpout();
+        spout.setJmsProvider(new JmsProvider() {
+            @Override
+            public ConnectionFactory connectionFactory() throws Exception {
+                // Create a ConnectionFactory
+                ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost");
+
+                return connectionFactory;
+            }
+
+            @Override
+            public Destination destination() throws Exception {
+
+                return null;
+            }
+        });
+
+        spout.setJmsTupleProducer(new JmsTupleProducer() {
+            @Override
+            public Values toTuple(Message message) throws JMSException {
+                if (message instanceof TextMessage) {
+                    long time = ((TextMessage) message).getLongProperty("time");
+                    return new Values(System.currentTimeMillis() - time);
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
+                outputFieldsDeclarer.declare(new Fields("time"));
+            }
+        });
+
+        builder.setSpout("word", spout, 3);
+        builder.setBolt("time", new ExclamationBolt(), 3).shuffleGrouping("time");
 
         Config conf = new Config();
         conf.setDebug(true);
