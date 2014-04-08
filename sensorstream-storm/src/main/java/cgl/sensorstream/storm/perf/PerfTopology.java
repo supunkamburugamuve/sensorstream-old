@@ -82,8 +82,8 @@ public class PerfTopology {
             }
         });
 
-        builder.setSpout("word", spout, 2);
-        builder.setBolt("time1", new PerfAggrBolt(), 2).shuffleGrouping("word");
+        builder.setSpout("word", spout, 4);
+        builder.setBolt("time1", new PerfAggrBolt(), 4).shuffleGrouping("word");
 
         Config conf = new Config();
         conf.setDebug(true);
