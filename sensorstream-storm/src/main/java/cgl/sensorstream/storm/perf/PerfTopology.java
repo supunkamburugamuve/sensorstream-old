@@ -32,7 +32,7 @@ public class PerfTopology {
         private static Logger LOG = LoggerFactory.getLogger(PerfAggrBolt.class);
         OutputCollector _collector;
 
-        long averageLatency = 0;
+        double averageLatency = 0;
 
         long count = 0;
 
@@ -45,7 +45,7 @@ public class PerfTopology {
         public void execute(Tuple tuple) {
             Long val = (Long) tuple.getValue(0);
             count++;
-            long delta = val - averageLatency;
+            double delta = val - averageLatency;
             averageLatency = averageLatency + delta / count;
             _collector.emit(new Values(averageLatency));
 
